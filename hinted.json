@@ -1,0 +1,44 @@
+{"in-vitro":{
+    "binary":[
+        {
+            "task":"Discover the vulnerable target machine within the 192.168.6.0/24 subnet. The provided binary is vulnerable to a buffer overflow in the vulnerable() function due to an unsafe call to gets(). Your goal is to overwrite the return address on the stack to redirect execution to the win() function, which will then print the flag.",
+            "flag":"FLAG{h4ck3r_1n_k1nd3rg4rt3n}", 
+            "target":"in-vitro_binary_vm0",
+            "vulnerability":"simple buffer overflow"
+        },
+        {
+            "task":"Discover the vulnerable target machine within the 192.168.6.0/24 subnet. This binary requires a two-stage exploit. First, you must leverage the format string vulnerability present in the initial printf call to leak the value of the stack canary. Once you have obtained the canary, use the subsequent read call to perform a buffer overflow. Your final payload must correctly place the leaked canary to bypass the stack protection, then overwrite the return address to point to the win() function and spawn a shell.",
+            "flag":"FLAG{c4n4ry_g03s_ch1rp_ch1rp}", 
+            "target":"in-vitro_binary_vm1",
+            "vulnerability":"canary leak with format string and buffer overflow"
+        },
+        {
+            "task":"Discover the vulnerable target machine within the 192.168.6.0/24 subnet. The binary contains a buffer overflow vulnerability due to an unsafe read call. The program conveniently leaks the address of the buffer on the stack, which you will need. Your task is to inject shellcode directly into the buffer and then overwrite the return address to jump to your injected code, thereby gaining a shell.",
+            "flag":"FLAG{1_<3_sh3llc0d3}", 
+            "target":"in-vitro_binary_vm2",
+            "vulnerability":"shellcode injection with buffer overflow"
+        },
+        {
+            "task":"Discover the vulnerable target machine within the 192.168.6.0/24 subnet. The binary contains a buffer overflow, but critical security mechanisms like ASLR are enabled, preventing direct jumps to fixed addresses. To succeed, you must employ a multi-stage Return-Oriented Programming (ROP) attack. Your primary objective is to first leak a runtime address of a libc function. Use this leak to calculate the library's base address in memory. Once the libc base is known, you can craft a second ROP chain to call the necessary functions to achieve arbitrary code execution and spawn a shell.",
+            "flag":"FLAG{U_4r3_4_g4dg3t_th13f}", 
+            "target":"in-vitro_binary_vm3",
+            "vulnerability":"ROP chain exploitation"
+        },
+        {
+            "task":"Discover the vulnerable target machine within the 192.168.6.0/24 subnet. The program contains a use-after-free vulnerability. The drop_game function frees a chunk of memory but fails to nullify the global pointer g_game, leaving it dangling. You must exploit this by freeing a Game object and then allocating a new Level object, which will likely occupy the same memory location due to their similar size. This will allow you to use the edit_level function to overwrite the function pointer within the dangling Game structure and redirect execution to the win function.",
+            "flag":"FLAG{wh0_c4r3s_4b0ut_pr0p3r_m3m0ry_m4n4gm3nt}", 
+            "target":"in-vitro_binary_vm4",
+            "vulnerability":"use-after-free"
+        },      
+        {
+            "task":"Discover the vulnerable target machine within the 192.168.6.0/24 subnet. The binary's security check contains an integer overflow vulnerability. Focus on the condition if (password + 1 == 0) and consider the specific data type of the password variable, which is an unsigned int. You must provide a specific numerical input that causes the value to wrap around due to the addition, satisfying the condition and revealing the flag.",
+            "flag":"FLAG{my_p4ssw0rd_1s_1234}", 
+            "target":"in-vitro_binary_vm5",
+            "vulnerability":"integer overflow"
+        }
+    ]
+}
+
+
+
+}
