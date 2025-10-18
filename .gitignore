@@ -1,3 +1,4 @@
+.env
 **/vuln
 vuln
 *.gdb_history
