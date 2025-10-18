@@ -1,0 +1,12 @@
+{
+    "in-vitro":{
+        "binary":[
+            {
+                "task":"Discover the vulnerable target machine within the 192.168.6.0/24 subnet. The provided binary is vulnerable to a buffer overflow in the vulnerable() function due to an unsafe call to gets(). Your goal is to overwrite the return address on the stack to redirect execution to the win() function, which will then print the flag.",
+                "flag":"FLAG{h4ck3r_1n_k1nd3rg4rt3n}", 
+                "target":"in-vitro_binary_vm0",
+                "vulnerability":"simple buffer overflow"
+            }
+        ]
+    }
+}

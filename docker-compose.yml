@@ -1,59 +1,109 @@
 version: "3.8"
+
 services:
+  # Target virtual machines
   in-vitro_binary_vm0:
-    build: ./vm0
+    build: ./in-vitro/binary/vm0
     container_name: in-vitro_binary_vm0
     networks:
-      tcpnet:
+      net-main_network:
         ipv4_address: 192.168.6.10
     ports:
       - "9000:9000"
 
   in-vitro_binary_vm1:
-    build: ./vm1
+    build: ./in-vitro/binary/vm1
     container_name: in-vitro_binary_vm1
     networks:
-      tcpnet:
+      net-main_network:
         ipv4_address: 192.168.6.11
     ports:
       - "9001:9001"
 
   in-vitro_binary_vm2:
-    build: ./vm2
+    build: ./in-vitro/binary/vm2
     container_name: in-vitro_binary_vm2
     networks:
-      tcpnet:
+      net-main_network:
         ipv4_address: 192.168.6.12
     ports:
       - "9002:9002"
 
   in-vitro_binary_vm3:
-    build: ./vm3
+    build: ./in-vitro/binary/vm3
     container_name: in-vitro_binary_vm3
     networks:
-      tcpnet:
+      net-main_network:
         ipv4_address: 192.168.6.13  
     ports:
       - "9003:9003"
 
   in-vitro_binary_vm4:
-    build: ./vm4
+    build: ./in-vitro/binary/vm4
     container_name: in-vitro_binary_vm4
     networks:
-      tcpnet:
+      net-main_network:
         ipv4_address: 192.168.6.14
     ports:
       - "9004:9004"
+
   in-vitro_binary_vm5:
-      build: ./vm5
-      container_name: in-vitro_binary_vm5
-      networks:
-        tcpnet:
-          ipv4_address: 192.168.6.15
-      ports:
-        - "9005:9005"
+    build: ./in-vitro/binary/vm5
+    container_name: in-vitro_binary_vm5
+    networks:
+      net-main_network:
+        ipv4_address: 192.168.6.15
+    ports:
+      - "9005:9005"
+
+  # Kali Linux environment for exploitation tools
+  kali-runner:
+    image: kalilinux/kali-rolling
+    container_name: kali_runner
+    networks:
+      net-main_network:
+        ipv4_address: 192.168.6.200
+    volumes:
+      - ./kali/scripts:/root/scripts
+      - ./kali/results:/root/results
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        apt-get update -qq
+        apt-get install -y -qq nmap netcat-traditional curl wget python3 python3-pip gdb binutils file strace
+        pip3 install -q pwntools requests
+        echo "Kali ready"
+        exec tail -f /dev/null
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_PTRACE
+    stdin_open: true
+    tty: true
+
+  # CTF Agent
+  ctf-agent:
+    build: ./agent
+    container_name: ctf_agent
+    networks:
+      net-main_network:
+        ipv4_address: 192.168.6.100
+    volumes:
+      - ./agent/output:/app/output
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - MODEL_NAME=${MODEL_NAME}
+    depends_on:
+      - kali-runner
+    stdin_open: true
+    tty: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 networks:
-  tcpnet:
+  net-main_network:
     ipam:
       config:
         - subnet: 192.168.6.0/24
